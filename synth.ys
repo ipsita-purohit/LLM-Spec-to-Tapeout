@@ -1,0 +1,32 @@
+
+read_verilog -sv outputs/fp16_multiplier.sv
+hierarchy -check -top fp16_multiplier
+
+# RTL elaboration
+proc
+opt_expr
+opt_clean
+check
+opt -fast
+
+# FSM & memory
+fsm
+opt -fast
+memory -nomap
+opt_clean
+
+# Technology mapping — techmap FIRST, then dfflibmap
+techmap
+opt -fast
+dfflibmap -liberty NangateOpenCellLibrary_typical.lib
+
+# abc -fast: skips resyn2 loop; uses ABC_NUM_THREADS cores (set in env)
+abc -liberty NangateOpenCellLibrary_typical.lib -fast
+
+# Tie-cell insertion for unconnected VDD/GND rails
+hilomap -hicell LOGIC1_X1 Z -locell LOGIC0_X1 Z
+
+opt_clean -purge
+stat
+
+write_verilog -noattr -noexpr outputs/p8_mapped.v
