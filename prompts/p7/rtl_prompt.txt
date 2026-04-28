@@ -1,0 +1,56 @@
+You are a hardware design expert.
+
+Generate synthesizable SystemVerilog RTL for the following specification.
+
+Module Name: exp_fixed_point
+Description: A 2-stage pipelined exponential function for unsigned fixed-point inputs using a 3-term Taylor  series approximation: e^x ≈ 1 + x + x^2/2 + x^3/6. Inputs are unsigned fixed-point values in  UQ1.(WIDTH-1) format (e.g., WIDTH = 8 implies UQ1.7). The output is in UQ(WIDTH+1).(WIDTH - 1) format.
+Additional rules for this module:
+- Keep the design pipelined and synthesizable.
+- Avoid constant part-selects inside always blocks.
+- Avoid indefinite-width concatenations.
+- Use explicit intermediate registers for x^2 and x^3.
+- Keep all arithmetic widths explicit.
+- Do not try to compress the whole Taylor series into one expression.
+- The output is pipelined and may appear after a few cycles of latency.
+
+Technology Node: SkyWater 130HD
+Clock Period: 4.5ns
+
+Parameters:
+- WIDTH = 8
+
+Ports:
+- clk (input)
+- rst (input)
+- enable (input)
+- x_in (input) WIDTH
+- exp_out (output) 2*WIDTH
+
+IMPORTANT:
+- Follow this exact module signature exactly:
+module exp_fixed_point #(
+  parameter WIDTH = 8
+) (
+  input  logic               clk,
+  input  logic               rst,
+  input  logic               enable,
+  input  logic [WIDTH-1:0]   x_in,
+  output logic [2*WIDTH-1:0] exp_out
+);
+
+
+- Use the same language style as the signature.
+- If the signature uses SystemVerilog constructs, generate synthesizable SystemVerilog.
+- Use only synthesizable RTL.
+- Prefer simple logic/reg/assign/always_ff/always_comb constructs.
+- Avoid structs, interfaces, classes, DPI, assertions, and verification-only constructs.
+- Avoid multidimensional packed arrays unless the spec clearly requires them.
+- Keep arithmetic explicit and widths clear.
+- Do not rename module names, ports, widths, parameter names, or reset style.
+- Do not add extra ports.
+- Do not include testbench code.
+- Do not use break or continue.
+- Avoid variable indexing inside constant expressions.
+- Avoid zero-width concatenations or replication.
+- Output must be a COMPLETE module including module and endmodule.
+- Return ONLY the HDL code.

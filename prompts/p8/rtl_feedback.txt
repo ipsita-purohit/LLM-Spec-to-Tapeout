@@ -1,0 +1,206 @@
+The RTL passed simulation, but OpenROAD/Yosys synthesis failed.
+
+                Module Name: fp16_multiplier
+                Error:
+                
+--- STDERR ---
+bash: util/docker_shell: No such file or directory
+
+                Please fix the RTL so it synthesizes cleanly.
+
+                Edit the ORIGINAL RTL only.
+                Do NOT edit the synthesized netlist.
+                Keep the exact same module signature.
+                Focus on latch inference, incomplete combinational assignments, and unsupported constructs.
+
+                Current RTL:
+                module fp16_multiplier(
+  input  logic [15:0] a,
+  input  logic [15:0] b,
+  output logic [15:0] result
+);
+
+  logic        sign_a;
+  logic        sign_b;
+  logic [4:0]  exp_a;
+  logic [4:0]  exp_b;
+  logic [9:0]  frac_a;
+  logic [9:0]  frac_b;
+  logic        a_is_zero;
+  logic        b_is_zero;
+  logic        a_is_inf;
+  logic        b_is_inf;
+  logic        a_is_nan;
+  logic        b_is_nan;
+  logic        result_sign;
+
+  logic [10:0] sig_a;
+  logic [10:0] sig_b;
+  logic [21:0] product;
+
+  logic signed [7:0] exp_a_eff;
+  logic signed [7:0] exp_b_eff;
+  logic signed [7:0] exp_base;
+  logic signed [7:0] exp_norm;
+  logic signed [7:0] exp_rounded;
+  logic signed [7:0] shift_sub;
+
+  logic [5:0]  lead_pos;
+  logic        lead_found;
+
+  logic [42:0] aligned;
+  logic [42:0] sub_shifted;
+  logic [63:0] aligned_64;
+  logic [63:0] lost_mask;
+
+  logic [10:0] sig11;
+  logic        guard_bit;
+  logic        round_bit;
+  logic        sticky_bit;
+
+  logic [11:0] sig11_rounded;
+  logic [10:0] sig11_final;
+
+  logic [9:0]  sub_frac;
+  logic        sub_guard;
+  logic        sub_round;
+  logic        sub_sticky;
+  logic        sub_inc;
+  logic [10:0] sub_frac_rounded;
+
+  integer i;
+
+  always_comb begin
+    sign_a        = a[15];
+    sign_b        = b[15];
+    exp_a         = a[14:10];
+    exp_b         = b[14:10];
+    frac_a        = a[9:0];
+    frac_b        = b[9:0];
+    a_is_zero     = (exp_a == 5'd0)  && (frac_a == 10'd0);
+    b_is_zero     = (exp_b == 5'd0)  && (frac_b == 10'd0);
+    a_is_inf      = (exp_a == 5'h1f) && (frac_a == 10'd0);
+    b_is_inf      = (exp_b == 5'h1f) && (frac_b == 10'd0);
+    a_is_nan      = (exp_a == 5'h1f) && (frac_a != 10'd0);
+    b_is_nan      = (exp_b == 5'h1f) && (frac_b != 10'd0);
+    result_sign   = sign_a ^ sign_b;
+
+    sig_a         = 11'd0;
+    sig_b         = 11'd0;
+    product       = 22'd0;
+    exp_a_eff     = 8'sd0;
+    exp_b_eff     = 8'sd0;
+    exp_base      = 8'sd0;
+    exp_norm      = 8'sd0;
+    exp_rounded   = 8'sd0;
+    shift_sub     = 8'sd0;
+    lead_pos      = 6'd0;
+    lead_found    = 1'b0;
+    aligned       = 43'd0;
+    sub_shifted   = 43'd0;
+    aligned_64    = 64'd0;
+    lost_mask     = 64'd0;
+    sig11         = 11'd0;
+    guard_bit     = 1'b0;
+    round_bit     = 1'b0;
+    sticky_bit    = 1'b0;
+    sig11_rounded = 12'd0;
+    sig11_final   = 11'd0;
+    sub_frac      = 10'd0;
+    sub_guard     = 1'b0;
+    sub_round     = 1'b0;
+    sub_sticky    = 1'b0;
+    sub_inc       = 1'b0;
+    sub_frac_rounded = 11'd0;
+    result        = 16'd0;
+
+    if (a_is_nan || b_is_nan || ((a_is_inf || b_is_inf) && (a_is_zero || b_is_zero))) begin
+      result = 16'h7e00;
+    end else if (a_is_inf || b_is_inf) begin
+      result = {result_sign, 5'h1f, 10'd0};
+    end else if (a_is_zero || b_is_zero) begin
+      result = {result_sign, 15'd0};
+    end else begin
+      sig_a     = (exp_a == 5'd0) ? {1'b0, frac_a} : {1'b1, frac_a};
+      sig_b     = (exp_b == 5'd0) ? {1'b0, frac_b} : {1'b1, frac_b};
+      exp_a_eff = (exp_a == 5'd0) ? 8'sd1 : $signed({3'b000, exp_a});
+      exp_b_eff = (exp_b == 5'd0) ? 8'sd1 : $signed({3'b000, exp_b});
+      product   = sig_a * sig_b;
+      exp_base  = exp_a_eff + exp_b_eff - 8'sd15;
+
+      for (i = 21; i >= 0; i = i - 1) begin
+        if (!lead_found && product[i]) begin
+          lead_found = 1'b1;
+          lead_pos   = i[5:0];
+        end
+      end
+
+      if (lead_found) begin
+        if (lead_pos > 6'd20) begin
+          aligned  = {product, 21'd0} >> (lead_pos - 6'd20);
+        end else begin
+          aligned  = {product, 21'd0} << (6'd20 - lead_pos);
+        end
+        exp_norm = exp_base + $signed({2'b00, lead_pos}) - 8'sd20;
+
+        if (exp_norm > 0) begin
+          sig11      = aligned[41:31];
+          guard_bit  = aligned[30];
+          round_bit  = aligned[29];
+          sticky_bit = |aligned[28:0];
+
+          sig11_rounded = {1'b0, sig11} +
+                          {{11{1'b0}}, (guard_bit && (round_bit || sticky_bit || sig11[0]))};
+
+          if (sig11_rounded[11]) begin
+            sig11_final = sig11_rounded[11:1];
+            exp_rounded = exp_norm + 8'sd1;
+          end else begin
+            sig11_final = sig11_rounded[10:0];
+            exp_rounded = exp_norm;
+          end
+
+          if (exp_rounded >= 8'sd31) begin
+            result = {result_sign, 5'h1f, 10'd0};
+          end else begin
+            result = {result_sign, exp_rounded[4:0], sig11_final[9:0]};
+          end
+        end else begin
+          shift_sub  = 8'sd1 - exp_norm;
+          aligned_64 = {21'd0, aligned};
+
+          if (shift_sub >= 8'sd63) begin
+            lost_mask = 64'hffff_ffff_ffff_ffff;
+          end else if (shift_sub <= 8'sd0) begin
+            lost_mask = 64'd0;
+          end else begin
+            lost_mask = (64'd1 << shift_sub[5:0]) - 64'd1;
+          end
+
+          if (shift_sub >= 8'sd43) begin
+            sub_shifted = 43'd0;
+          end else begin
+            sub_shifted = aligned >> shift_sub[5:0];
+          end
+
+          sub_frac   = sub_shifted[40:31];
+          sub_guard  = sub_shifted[30];
+          sub_round  = sub_shifted[29];
+          sub_sticky = (|sub_shifted[28:0]) | (|(aligned_64 & lost_mask));
+          sub_inc    = sub_guard && (sub_round || sub_sticky || sub_frac[0]);
+
+          sub_frac_rounded = {1'b0, sub_frac} + {{10{1'b0}}, sub_inc};
+
+          if (sub_frac_rounded[10]) begin
+            result = {result_sign, 5'd1, 10'd0};
+          end else begin
+            result = {result_sign, 5'd0, sub_frac_rounded[9:0]};
+          end
+        end
+      end else begin
+        result = {result_sign, 15'd0};
+      end
+    end
+  end
+
+endmodule

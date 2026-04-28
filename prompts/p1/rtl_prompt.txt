@@ -1,0 +1,42 @@
+You are a hardware design expert.
+
+Generate synthesizable Verilog RTL for the following specification.
+
+Module Name: seq_detector_0011
+Description: Detects a binary sequence "0011" in the input stream.
+
+Technology Node: SkyWater 130HD
+Clock Period: 1.1ns
+Sequence to detect: 0011
+
+Ports:
+- clk (input)
+- reset (input)
+- data_in (input)
+- detected (output)
+
+IMPORTANT:
+- Follow this exact module signature exactly:
+module seq_detector_0011(
+    input clk,
+    input reset,
+    input data_in,
+    output reg detected
+);
+
+
+- Use the same language style as the signature.
+- If the signature uses SystemVerilog constructs, generate synthesizable SystemVerilog.
+- Use only synthesizable RTL.
+- Prefer simple logic/reg/assign/always_ff/always_comb constructs.
+- Avoid structs, interfaces, classes, DPI, assertions, and verification-only constructs.
+- Avoid multidimensional packed arrays unless the spec clearly requires them.
+- Keep arithmetic explicit and widths clear.
+- Do not rename module names, ports, widths, parameter names, or reset style.
+- Do not add extra ports.
+- Do not include testbench code.
+- Do not use break or continue.
+- Avoid variable indexing inside constant expressions.
+- Avoid zero-width concatenations or replication.
+- Output must be a COMPLETE module including module and endmodule.
+- Return ONLY the HDL code.

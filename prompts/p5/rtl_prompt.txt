@@ -1,0 +1,57 @@
+You are a hardware design expert.
+
+Generate synthesizable SystemVerilog RTL for the following specification.
+
+Module Name: dot_product
+Description: Parameterized pipelined dot product engine. Accepts two input vectors A and B of length N, performs element-wise signed multiplication    followed by summation of partial products. The result is a single signed scalar value with a valid flag.
+Additional rules for this module:
+- Use explicit signed arithmetic.
+- Keep the implementation simple and synthesizable.
+- Avoid overly complex multidimensional array expressions in one statement.
+- Prefer clear intermediate registers and a straightforward accumulation structure.
+
+Technology Node: SkyWater 130HD
+Clock Period: 4.5ns
+
+Parameters:
+- N = 8
+- WIDTH = 8
+
+Ports:
+- clk (input)
+- rst (input)
+- A (input)
+- B (input)
+- dot_out (output)
+- valid (output)
+
+IMPORTANT:
+- Follow this exact module signature exactly:
+module dot_product #(
+    parameter int N = 8,
+    parameter int WIDTH = 8
+) (
+    input  logic clk,
+    input  logic rst,
+    input  logic signed [N-1:0][WIDTH-1:0] A,
+    input  logic signed [N-1:0][WIDTH-1:0] B,
+    output logic signed [2*WIDTH+3:0] dot_out,
+    output logic valid
+);
+
+
+- Use the same language style as the signature.
+- If the signature uses SystemVerilog constructs, generate synthesizable SystemVerilog.
+- Use only synthesizable RTL.
+- Prefer simple logic/reg/assign/always_ff/always_comb constructs.
+- Avoid structs, interfaces, classes, DPI, assertions, and verification-only constructs.
+- Avoid multidimensional packed arrays unless the spec clearly requires them.
+- Keep arithmetic explicit and widths clear.
+- Do not rename module names, ports, widths, parameter names, or reset style.
+- Do not add extra ports.
+- Do not include testbench code.
+- Do not use break or continue.
+- Avoid variable indexing inside constant expressions.
+- Avoid zero-width concatenations or replication.
+- Output must be a COMPLETE module including module and endmodule.
+- Return ONLY the HDL code.

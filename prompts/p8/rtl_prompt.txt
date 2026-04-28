@@ -1,0 +1,47 @@
+You are a hardware design expert.
+
+Generate synthesizable SystemVerilog RTL for the following specification.
+
+Module Name: fp16_multiplier
+Description: 16-bit floating-point multiplier (IEEE 754 half-precision compatible) with support for zero detection and rounding to nearest even. Takes two 16-bit FP16 inputs and computes the product in a single cycle.
+Additional rules for this module:
+    - Do not infer latches anywhere.
+    - If you use always_comb, assign every temporary signal on every path.
+    - Put safe default assignments at the top of every combinational block.
+    - Prefer continuous assignments or fully-assigned combinational logic.
+    - Do not leave sig_a, sig_b, mantissa, exponent, or intermediate flags partially assigned.
+    - Avoid conditional branches that skip assignments.
+    - Keep all slices constant-width.
+
+Technology Node: SkyWater 130HD
+Clock Period: 9ns
+
+Ports:
+- a (input) 16
+- b (input) 16
+- result (output) 16
+
+IMPORTANT:
+- Follow this exact module signature exactly:
+module fp16_multiplier(
+  input  logic [15:0] a,
+  input  logic [15:0] b,
+  output logic [15:0] result
+);
+
+
+- Use the same language style as the signature.
+- If the signature uses SystemVerilog constructs, generate synthesizable SystemVerilog.
+- Use only synthesizable RTL.
+- Prefer simple logic/reg/assign/always_ff/always_comb constructs.
+- Avoid structs, interfaces, classes, DPI, assertions, and verification-only constructs.
+- Avoid multidimensional packed arrays unless the spec clearly requires them.
+- Keep arithmetic explicit and widths clear.
+- Do not rename module names, ports, widths, parameter names, or reset style.
+- Do not add extra ports.
+- Do not include testbench code.
+- Do not use break or continue.
+- Avoid variable indexing inside constant expressions.
+- Avoid zero-width concatenations or replication.
+- Output must be a COMPLETE module including module and endmodule.
+- Return ONLY the HDL code.
