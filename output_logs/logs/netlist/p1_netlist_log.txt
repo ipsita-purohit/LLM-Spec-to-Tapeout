@@ -1,0 +1,21 @@
+
+outputs/p1_mapped.v:25: error: Unknown module type: INV_X1
+outputs/p1_mapped.v:29: error: Unknown module type: INV_X1
+outputs/p1_mapped.v:33: error: Unknown module type: INV_X1
+outputs/p1_mapped.v:37: error: Unknown module type: NOR2_X1
+outputs/p1_mapped.v:42: error: Unknown module type: NOR2_X1
+outputs/p1_mapped.v:47: error: Unknown module type: OR3_X1
+outputs/p1_mapped.v:53: error: Unknown module type: NOR3_X1
+outputs/p1_mapped.v:59: error: Unknown module type: NOR2_X1
+outputs/p1_mapped.v:64: error: Unknown module type: DFF_X1
+outputs/p1_mapped.v:70: error: Unknown module type: DFF_X1
+outputs/p1_mapped.v:76: error: Unknown module type: DFF_X1
+outputs/p1_mapped.v:82: error: Unknown module type: DFF_X1
+13 error(s) during elaboration.
+*** These modules were missing:
+        DFF_X1 referenced 4 times.
+        INV_X1 referenced 3 times.
+        NOR2_X1 referenced 3 times.
+        NOR3_X1 referenced 1 times.
+        OR3_X1 referenced 1 times.
+***

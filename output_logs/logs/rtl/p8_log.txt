@@ -1,0 +1,16 @@
+Test 1: 1.0 * 2.0:
+  result   = 0100000000000000
+  expected = 0100000000000000
+  PASS
+
+Test 2: 0.0 * 5.0:
+  result   = 0000000000000000
+  expected = 0000000000000000
+  PASS
+
+Test 3: -3.0 * 4.0:
+  result   = 1100101000000000
+  expected = 1100101000000000
+  PASS
+
+Testbenches/iclad_fp16_mult_tb.v:46: $finish called at 3 (1s)

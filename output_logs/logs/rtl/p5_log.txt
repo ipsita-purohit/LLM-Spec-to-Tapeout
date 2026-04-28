@@ -1,0 +1,7 @@
+A = 
+254 167 7 135 11 224 235 39 
+B = 
+107 197 7 192 235 47 218 136 
+Expected dot product: 155693
+PASS: Output = 155693
+Testbenches/iclad_dot_product_tb.v:68: $finish called at 26 (1s)

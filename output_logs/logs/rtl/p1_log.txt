@@ -1,0 +1,2 @@
+Test PASSED!
+Testbenches/iclad_seq_detector_tb_netlist_tmp.v:44: $finish called at 165 (1s)

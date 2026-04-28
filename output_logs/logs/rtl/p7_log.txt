@@ -1,0 +1,3 @@
+exp(1.0) = 341 (expected ≈ 341)
+PASS
+Testbenches/iclad_exp_tb.v:55: $finish called at 50 (1s)
