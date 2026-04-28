@@ -1,0 +1,6 @@
+Chip area (µm²): N/A
+Number of cells: N/A
+Number of wires: N/A
+Number of public wires: N/A
+Number of memories: N/A
+Number of processes: N/A
