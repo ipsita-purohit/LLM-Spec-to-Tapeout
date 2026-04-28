@@ -1,0 +1,2 @@
+OBS result=0100000000000000
+/Users/ipsitap/spec2gds/generated/p8/tb.sv:16: $finish called at 2 (1s)

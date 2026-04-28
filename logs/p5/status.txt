@@ -1,0 +1,4 @@
+SYNTH_FAIL
+Iteration: 6
+bash: util/docker_shell: No such file or directory
+

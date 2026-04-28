@@ -1,0 +1,4 @@
+FAIL
+Iteration: 6
+Expected: y_out=[1, 4, 10, 20, 35, 56, 84, 120]
+Actual  : y_out_prefix=[0, 1, 3, 6, 10, 15, 21, 28], full=[0, 1, 3, 6, 10, 15, 21, 28]

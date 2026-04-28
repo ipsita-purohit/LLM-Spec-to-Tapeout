@@ -1,0 +1,9 @@
+OBS y_out=0
+OBS y_out=1
+OBS y_out=3
+OBS y_out=6
+OBS y_out=10
+OBS y_out=15
+OBS y_out=21
+OBS y_out=28
+/Users/ipsitap/spec2gds/generated/p9/tb.sv:60: $finish called at 90 (1s)

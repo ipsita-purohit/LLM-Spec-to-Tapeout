@@ -1,0 +1,13 @@
+FAIL: RTL generation error
+Codex output did not contain a complete module.
+RAW OUTPUT:
+Patched the original RTL at [outputs/seq_detector_0011.sv](/Users/ipsitap/spec2gds/outputs/seq_detector_0011.sv).
+
+The fix replaces the prior shift-register style implementation with a synthesis-safe FSM that keeps the same module signature and removes the main synthesis risks:
+- removed `initial` state/output initialization
+- added explicit default assignments in the combinational block
+- separated next-state / next-output logic from sequential state updates
+- kept reset behavior inside the clocked block, matching the problem’s synchronous reset description
+
+Verification: `yosys -p 'read_verilog outputs/seq_detector_0011.sv; proc; opt; stat'` completed successfully, and Yosys reported no latch inference for `next_state` or `next_detected`.
+

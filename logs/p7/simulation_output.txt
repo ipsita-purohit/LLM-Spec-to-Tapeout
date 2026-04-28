@@ -1,0 +1,8 @@
+OBS exp_out=0
+OBS exp_out=0
+OBS exp_out=341
+OBS exp_out=341
+OBS exp_out=341
+OBS exp_out=341
+OBS exp_out=341
+/Users/ipsitap/spec2gds/generated/p7/tb.sv:65: $finish called at 80 (1s)

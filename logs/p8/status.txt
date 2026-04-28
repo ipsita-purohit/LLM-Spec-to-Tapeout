@@ -1,0 +1,17 @@
+FAIL: RTL generation error
+Codex output did not contain a complete module.
+RAW OUTPUT:
+I rewrote the original `fp16_multiplier` RTL into a more synthesis-conservative form in [generated/p8/design.sv](/Users/ipsitap/spec2gds/generated/p8/design.sv:1) and the flow-facing copy in [outputs/fp16_multiplier.sv](/Users/ipsitap/spec2gds/outputs/fp16_multiplier.sv:1). The module signature is unchanged.
+
+The changes specifically remove common Yosys/OpenROAD failure points:
+- no block-scoped declarations inside the combinational process
+- no helper functions with integer arguments / loops
+- no variable-index bit extraction in the subnormal rounding path
+- full default assignments remain in place, so no latch inference
+
+I verified both files with Yosys:
+- `read_verilog -sv ...; hierarchy -top fp16_multiplier; proc; opt; check`
+- result: `Found and reported 0 problems.`
+
+I could not use `util/docker_shell` because it does not exist in this workspace, so validation was done directly with local `yosys`.
+

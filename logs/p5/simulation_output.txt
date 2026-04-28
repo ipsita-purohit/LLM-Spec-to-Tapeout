@@ -1,0 +1,7 @@
+OBS valid=0 dot_out=0
+OBS valid=0 dot_out=96
+OBS valid=1 dot_out=96
+OBS valid=0 dot_out=96
+OBS valid=0 dot_out=96
+OBS valid=0 dot_out=96
+/Users/ipsitap/spec2gds/generated/p5/tb.sv:50: $finish called at 80 (1s)
