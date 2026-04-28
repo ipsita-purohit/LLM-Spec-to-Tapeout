@@ -1,0 +1,6 @@
+violation type: Metal Spacing
+	srcs: net:_1995_ net:_2010_
+	bbox = (176.9500, 155.8600) - (177.0200, 155.8900) on Layer metal1
+violation type: Short
+	srcs: net:_1872_ net:_2010_
+	bbox = (176.9500, 156.0995) - (177.0200, 156.1005) on Layer metal1
